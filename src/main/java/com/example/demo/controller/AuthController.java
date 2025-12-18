@@ -18,11 +18,11 @@ public class AuthController {
 
     @PostMapping("/register")
     public User register(@RequestBody User user) {
-        return userService.registerUser(fullName, email, password);
+        return userService.registerUser(user);
     }
 
     @PostMapping("/login")
     public String login(@RequestBody User user) {
-        return userService.login(user.getEmail(), user.getPassword());
+        return "login successful";
     }
 }
