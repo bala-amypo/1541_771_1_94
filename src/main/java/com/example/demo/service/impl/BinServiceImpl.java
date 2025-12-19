@@ -1,6 +1,5 @@
 package com.example.demo.service.Impl;
 
-import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.Bin;
 import com.example.demo.repository.BinRepository;
 import com.example.demo.service.BinService;
@@ -36,8 +35,7 @@ public class BinServiceImpl implements BinService {
 
     @Override
     public Bin getBinById(Long id) {
-        return binRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Bin not found"));
+        return binRepository.findById(id);
     }
 
     // @Override
