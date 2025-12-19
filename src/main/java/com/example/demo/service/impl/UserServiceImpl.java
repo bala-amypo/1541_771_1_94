@@ -9,7 +9,7 @@ import com.example.demo.service.UserService;
 @Service
 public class UserServiceImpl implements UserService {
 
-    public final UserRepository repository;
+    private final UserRepository repository;
     public UserServiceImpl( UserRepository repository) {
         this.repository = repository;
     }
