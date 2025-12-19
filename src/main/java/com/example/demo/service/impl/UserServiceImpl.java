@@ -16,11 +16,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User registerUser(User user) {
-        return user;
+        return repository.save(user);
     }
 
     // @Override
-    // public String getByEmail() {
+      // public String getByEmail() {
     //     return "fetch successfully";
     // }
 
