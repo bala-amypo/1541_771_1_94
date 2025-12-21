@@ -33,19 +33,19 @@ public class ZoneServiceImpl implements ZoneService {
 
     @Override
     public Zone getZoneById(Long id) {
-        return zoneRepository.findById(id);
+        return zoneRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Zone not found"));
     }
-    // .orElseThrow(() -> new ResourceNotFoundException("Zone not found"));
 
-    // @Override
-    // public List<Zone> getAllZones() {
-    //     return zoneRepository.findAll();
-    // }
+    @Override
+    public List<Zone> getAllZones() {
+        return zoneRepository.findAll();
+    }
 
-    // @Override
-    // public void deactivateZone(Long id) {
-    //     Zone zone = getZoneById(id);
-    //     zone.setActive(false);
-    //     zoneRepository.save(zone);
-    // }
+    @Override
+    public void deactivateZone(Long id) {
+        Zone zone = getZoneById(id);
+        zone.setActive(false);
+        zoneRepository.save(zone);
+    }
 }
