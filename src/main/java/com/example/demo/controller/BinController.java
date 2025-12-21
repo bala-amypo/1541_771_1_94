@@ -1,42 +1,50 @@
-// package com.example.demo.controller;
+package com.example.demo.controller;
 
-// import com.example.demo.model.Bin;
-// import com.example.demo.service.BinService;
-// import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-// @RestController
-// @RequestMapping("/api/bins")
-// public class BinController {
+import com.example.demo.model.Bin;
+import com.example.demo.service.BinService;
 
-//     private final BinService service;
+@RestController
+@RequestMapping("/api/bins")
+public class BinController {
 
-//     public BinController(BinService service) {
-//         this.service = service;
-//     }
+    private final BinService binService;
 
-//     @PostMapping
-//     public Bin create(@RequestBody Bin bin) {
-//         return service.createBin(bin);
-//     }
+    public BinController(BinService binService) {
+        this.binService = binService;
+    }
 
-//     @PutMapping("/{id}")
-//     public Bin update(@PathVariable Long id, @RequestBody Bin bin) {
-//         return service.updateBin(id, bin);
-//     }
+    @PostMapping
+    public Bin createBin(@RequestBody Bin bin) {
+        return binService.createBin(bin);
+    }
 
-//     @GetMapping("/{id}")
-//     public Bin getById(@PathVariable Long id) {
-//         return service.getBinById(id);
-//     }
+    @PutMapping("/{id}")
+    public Bin updateBin(@PathVariable Long id, @RequestBody Bin bin) {
+        return binService.updateBin(id, bin);
+    }
 
-//     @GetMapping
-//     public List<Bin> getAll() {
-//         return service.getAllBins();
-//     }
+    @GetMapping("/{id}")
+    public Bin getBin(@PathVariable Long id) {
+        return binService.getBin(id);
+    }
 
-//     @PutMapping("/{id}/deactivate")
-//     public void deactivate(@PathVariable Long id) {
-//         service.deactivateBin(id);
-//     }
-// }
+    @GetMapping
+    public List<Bin> getAllBins() {
+        return binService.getAllBins();
+    }
+
+    @PutMapping("/{id}/deactivate")
+    public void deactivateBin(@PathVariable Long id) {
+        binService.deactivateBin(id);
+    }
+}
