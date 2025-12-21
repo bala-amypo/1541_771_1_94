@@ -1,7 +1,6 @@
 package com.example.demo.model;
 
 import java.time.Instant;
-import java.util.Date;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,14 +8,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 
 @Entity
-@Table(name = "overflow_predictions")
-public class OverflowPrediction {
+@Table(name = "usage_pattern_models")
+public class UsagePatternModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,33 +24,31 @@ public class OverflowPrediction {
     @ManyToOne(optional = false)
     private Bin bin;
 
-    @FutureOrPresent
-    private Date predictedFullDate;
+    @NotNull
+    @PositiveOrZero
+    private Double avgDailyIncreaseWeekday;
 
     @NotNull
-    @Min(0)
-    private Integer daysUntilFull;
+    @PositiveOrZero
+    private Double avgDailyIncreaseWeekend;
 
-    @ManyToOne
-    private UsagePatternModel modelUsed;
-
-    private Instant generatedAt;
+    private Instant lastUpdated;
 
     @PrePersist
-    public void onCreate() {
-        generatedAt = Instant.now();
+    @PreUpdate
+    public void onUpdate() {
+        lastUpdated = Instant.now();
     }
 
-    public OverflowPrediction() {
+    public UsagePatternModel() {
     }
 
-    public OverflowPrediction(Bin bin, @FutureOrPresent Date predictedFullDate, @NotNull @Min(0) Integer daysUntilFull,
-            UsagePatternModel modelUsed, Instant generatedAt) {
+    public UsagePatternModel(Bin bin, @NotNull @PositiveOrZero Double avgDailyIncreaseWeekday,
+            @NotNull @PositiveOrZero Double avgDailyIncreaseWeekend, Instant lastUpdated) {
         this.bin = bin;
-        this.predictedFullDate = predictedFullDate;
-        this.daysUntilFull = daysUntilFull;
-        this.modelUsed = modelUsed;
-        this.generatedAt = generatedAt;
+        this.avgDailyIncreaseWeekday = avgDailyIncreaseWeekday;
+        this.avgDailyIncreaseWeekend = avgDailyIncreaseWeekend;
+        this.lastUpdated = lastUpdated;
     }
 
     public Long getId() {
@@ -62,20 +59,16 @@ public class OverflowPrediction {
         return bin;
     }
 
-    public Date getPredictedFullDate() {
-        return predictedFullDate;
+    public Double getAvgDailyIncreaseWeekday() {
+        return avgDailyIncreaseWeekday;
     }
 
-    public Integer getDaysUntilFull() {
-        return daysUntilFull;
+    public Double getAvgDailyIncreaseWeekend() {
+        return avgDailyIncreaseWeekend;
     }
 
-    public UsagePatternModel getModelUsed() {
-        return modelUsed;
-    }
-
-    public Instant getGeneratedAt() {
-        return generatedAt;
+    public Instant getLastUpdated() {
+        return lastUpdated;
     }
 
     public void setId(Long id) {
@@ -86,20 +79,16 @@ public class OverflowPrediction {
         this.bin = bin;
     }
 
-    public void setPredictedFullDate(Date predictedFullDate) {
-        this.predictedFullDate = predictedFullDate;
+    public void setAvgDailyIncreaseWeekday(Double avgDailyIncreaseWeekday) {
+        this.avgDailyIncreaseWeekday = avgDailyIncreaseWeekday;
     }
 
-    public void setDaysUntilFull(Integer daysUntilFull) {
-        this.daysUntilFull = daysUntilFull;
+    public void setAvgDailyIncreaseWeekend(Double avgDailyIncreaseWeekend) {
+        this.avgDailyIncreaseWeekend = avgDailyIncreaseWeekend;
     }
 
-    public void setModelUsed(UsagePatternModel modelUsed) {
-        this.modelUsed = modelUsed;
-    }
-
-    public void setGeneratedAt(Instant generatedAt) {
-        this.generatedAt = generatedAt;
+    public void setLastUpdated(Instant lastUpdated) {
+        this.lastUpdated = lastUpdated;
     }
     
 }
