@@ -1,67 +1,88 @@
-// package com.example.demo.model;
+package com.example.demo.model;
 
-// import java.security.Timestamp;
+import java.time.Instant;
 
-// import jakarta.persistence.Entity;
-// import jakarta.persistence.GeneratedValue;
-// import jakarta.persistence.GenerationType;
-// import jakarta.persistence.Id;
-// import jakarta.validation.constraints.NotNull;
-// import jakarta.validation.constraints.Past;
-// import jakarta.validation.constraints.Size;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 
-// @Entity
-// public class FillLevelRecord {
-//     @Id
-//     @GeneratedValue(strategy = GenerationType.IDENTITY)
-//     private Long id;
-//     private Bin bin;
-//     @NotNull
-//     @Size(min=0,max=100)
-//     private Double fillPercentage;
-//     @Past
-//     private Timestamp recordedAt;
-//     private  Boolean isWeekend;
+@Entity
+@Table(name = "fill_level_records")
+public class FillLevelRecord {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(optional = false)
+    private Bin bin;
+
+    @NotNull
+    @Min(0)
+    @Max(100)
+    private Double fillPercentage;
+
+    @PastOrPresent
+    private Instant recordedAt;
+
+    private Boolean isWeekend;
+
+    public FillLevelRecord() {
+    }
+
+    public FillLevelRecord(Bin bin, @NotNull @Min(0) @Max(100) Double fillPercentage, @PastOrPresent Instant recordedAt,
+            Boolean isWeekend) {
+        this.bin = bin;
+        this.fillPercentage = fillPercentage;
+        this.recordedAt = recordedAt;
+        this.isWeekend = isWeekend;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Bin getBin() {
+        return bin;
+    }
+
+    public Double getFillPercentage() {
+        return fillPercentage;
+    }
+
+    public Instant getRecordedAt() {
+        return recordedAt;
+    }
+
+    public Boolean getIsWeekend() {
+        return isWeekend;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setBin(Bin bin) {
+        this.bin = bin;
+    }
+
+    public void setFillPercentage(Double fillPercentage) {
+        this.fillPercentage = fillPercentage;
+    }
+
+    public void setRecordedAt(Instant recordedAt) {
+        this.recordedAt = recordedAt;
+    }
+
+    public void setIsWeekend(Boolean isWeekend) {
+        this.isWeekend = isWeekend;
+    }
     
-//     public FillLevelRecord(Bin bin, Double fillPercentage, Timestamp recordedAt, Boolean isWeekend) {
-//         this.bin = bin;
-//         this.fillPercentage = fillPercentage;
-//         this.recordedAt = recordedAt;
-//         this.isWeekend = isWeekend;
-//     }
-//     public FillLevelRecord(Boolean isWeekend) {
-//         this.isWeekend = isWeekend;
-//     }
-//     public Long getId() {
-//         return id;
-//     }
-//     public Bin getBin() {
-//         return bin;
-//     }
-//     public Double getFillPercentage() {
-//         return fillPercentage;
-//     }
-//     public Timestamp getRecordedAt() {
-//         return recordedAt;
-//     }
-//     public Boolean getIsWeekend() {
-//         return isWeekend;
-//     }
-//     public void setId(Long id) {
-//         this.id = id;
-//     }
-//     public void setBin(Bin bin) {
-//         this.bin = bin;
-//     }
-//     public void setFillPercentage(Double fillPercentage) {
-//         this.fillPercentage = fillPercentage;
-//     }
-//     public void setRecordedAt(Timestamp recordedAt) {
-//         this.recordedAt = recordedAt;
-//     }
-//     public void setIsWeekend(Boolean isWeekend) {
-//         this.isWeekend = isWeekend;
-//     }
-
-    
-// }
+}
