@@ -1,16 +1,16 @@
-// package com.example.demo.service;
+package com.example.demo.service;
 
-// import java.util.List;
+import java.util.List;
 
-// import com.example.demo.model.FillLevelRecord;
+import com.example.demo.model.FillLevelRecord;
 
-// public interface FillLevelRecordService {
+public interface FillLevelRecordService {
 
-//     FillLevelRecord createRecord(FillLevelRecord record);
+    FillLevelRecord createRecord(FillLevelRecord record);
 
-//     List<FillLevelRecord> getRecordsForBin(Long binId);
+    List<FillLevelRecord> getRecordsForBin(Long binId);
 
-//     FillLevelRecord getRecordById(Long id);
+    FillLevelRecord getRecordById(Long id);
 
-//     // List<FillLevelRecord> getRecentRecords(Long binId, int limit);
-// }
+    // List<FillLevelRecord> getRecentRecords(Long binId, int limit);
+}
