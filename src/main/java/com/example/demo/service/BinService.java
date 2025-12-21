@@ -1,17 +1,18 @@
-// package com.example.demo.service;
+package com.example.demo.service;
 
-// import com.example.demo.model.Bin;
-// // import java.util.List;
+import java.util.List;
 
-// public interface BinService {
+import com.example.demo.model.Bin;
 
-//     Bin createBin(Bin bin);
+public interface BinService {
 
-//     Bin updateBin(Long id, Bin bin);
+    Bin createBin(Bin bin);
 
-//     Bin getBinById(Long id);
+    Bin updateBin(Long id, Bin bin);
 
-//     // List<Bin> getAllBins();
+    Bin getBin(Long id);
 
-//     // void deactivateBin(Long id);
-// }
+    List<Bin> getAllBins();
+
+    void deactivateBin(Long id);
+}
