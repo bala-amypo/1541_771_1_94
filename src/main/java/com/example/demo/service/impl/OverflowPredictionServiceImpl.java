@@ -15,7 +15,7 @@ import com.example.demo.repository.UsagePatternModelRepository;
 import com.example.demo.service.OverflowPredictionService;
 
 @Service
- class OverflowPredictionServiceImpl implements OverflowPredictionService {
+ public class OverflowPredictionServiceImpl implements OverflowPredictionService {
 
     private final OverflowPredictionRepository predictionRepo;
     private final UsagePatternModelRepository modelRepo;
