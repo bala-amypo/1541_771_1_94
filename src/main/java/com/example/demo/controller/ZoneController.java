@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import java.util.List;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,13 +38,13 @@ public class ZoneController {
         return zoneService.getZoneById(id);
     }
 
-    // @GetMapping
-    // public List<Zone> getAll() {
-    //     return zoneService.getAll();
-    // }
+    @GetMapping
+    public List<Zone> getAll() {
+        return zoneService.getAllZones();
+    }
 
-    // @PutMapping("/{id}/deactivate")
-    // public void deactivate(@PathVariable Long id) {
-    //     zoneService.deactivate(id);
-    // }
+    @PutMapping("/{id}/deactivate")
+    public void deactivate(@PathVariable Long id) {
+        zoneService.deactivateZone(id);
+    }
 }
