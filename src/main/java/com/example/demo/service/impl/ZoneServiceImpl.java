@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.Zone;
 import com.example.demo.repository.ZoneRepository;
 import com.example.demo.service.ZoneService;
@@ -33,8 +32,8 @@ public class ZoneServiceImpl implements ZoneService {
 
     @Override
     public Zone getZoneById(Long id) {
-        return zoneRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Zone not found"));
+        return zoneRepository.findById(id).orElse(null);
+                
     }
 
     @Override
@@ -45,7 +44,10 @@ public class ZoneServiceImpl implements ZoneService {
     @Override
     public void deactivateZone(Long id) {
         Zone zone = getZoneById(id);
+        if(zone!=null){
         zone.setActive(false);
         zoneRepository.save(zone);
+        }
+        
     }
 }

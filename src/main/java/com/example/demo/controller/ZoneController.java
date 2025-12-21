@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.model.Zone;
 import com.example.demo.service.ZoneService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/zones")
 public class ZoneController {
@@ -24,7 +26,7 @@ public class ZoneController {
     }
 
     @PostMapping
-    public Zone create(@RequestBody Zone zone) {
+    public Zone create(@Valid @RequestBody Zone zone) {
         return zoneService.createZone(zone);
     }
 
