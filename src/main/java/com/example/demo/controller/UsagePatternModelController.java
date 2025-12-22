@@ -17,7 +17,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/models")
-@Tag(name = "Usage Pattern Model API", description = "Usage pattern analytics")
 public class UsagePatternModelController {
 
     private final UsagePatternModelService service;
