@@ -24,32 +24,25 @@ public class SecurityConfig {
         return new JwtTokenProvider("VerySecretKeyForJwtDemo1234567890");
     }
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+   @Bean
+public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http.csrf(csrf -> csrf.disable())
-
-            // stateless API — important for JWT use
-            .sessionManagement(sm ->
-                    sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            )
-
-            .authorizeHttpRequests(auth -> auth
-                // public endpoints
+    http.csrf(csrf -> csrf.disable())
+        .sessionManagement(sm ->
+                sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        )
+        .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                         "/auth/**",
                         "/swagger-ui/**",
                         "/swagger-ui.html",
                         "/v3/api-docs/**"
                 ).permitAll()
-
-                // everything else requires auth
                 .anyRequest().authenticated()
-            )
+        )
+        .httpBasic(config -> config.disable());   // 👈 popup disabled
 
-            // basic auth ON only so tests still work
-            .httpBasic(Customizer.withDefaults());
+    return http.build();
+}
 
-        return http.build();
-    }
 }
