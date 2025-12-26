@@ -7,10 +7,12 @@ import com.example.demo.model.FillLevelRecord;
 import com.example.demo.repository.BinRepository;
 import com.example.demo.repository.FillLevelRecordRepository;
 import com.example.demo.service.FillLevelRecordService;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Service
 public class FillLevelRecordServiceImpl implements FillLevelRecordService {
 
     private final FillLevelRecordRepository recordRepository;
@@ -29,17 +31,18 @@ public class FillLevelRecordServiceImpl implements FillLevelRecordService {
                 .orElseThrow(() -> new ResourceNotFoundException("Bin not found"));
 
         if (!Boolean.TRUE.equals(bin.getActive())) {
-            throw new BadRequestException("Inactive bin");
+            throw new BadRequestException("Bin is inactive");
         }
 
         if (record.getFillPercentage() < 0 || record.getFillPercentage() > 100) {
-            throw new BadRequestException("fill percentage invalid");
+            throw new BadRequestException("fillPercentage must be between 0 and 100");
         }
 
         if (record.getRecordedAt().isAfter(LocalDateTime.now())) {
-            throw new BadRequestException("recordedAt cannot be future");
+            throw new BadRequestException("recordedAt cannot be in the future");
         }
 
+        record.setBin(bin);
         return recordRepository.save(record);
     }
 
@@ -47,6 +50,7 @@ public class FillLevelRecordServiceImpl implements FillLevelRecordService {
     public List<FillLevelRecord> getRecordsForBin(Long binId) {
         Bin bin = binRepository.findById(binId)
                 .orElseThrow(() -> new ResourceNotFoundException("Bin not found"));
+
         return recordRepository.findByBinOrderByRecordedAtDesc(bin);
     }
 
@@ -58,7 +62,7 @@ public class FillLevelRecordServiceImpl implements FillLevelRecordService {
 
     @Override
     public List<FillLevelRecord> getRecentRecords(Long binId, int limit) {
-        List<FillLevelRecord> all = getRecordsForBin(binId);
-        return all.stream().limit(limit).toList();
+        List<FillLevelRecord> list = getRecordsForBin(binId);
+        return list.stream().limit(limit).toList();
     }
 }
