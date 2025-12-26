@@ -14,10 +14,6 @@ public class JwtTokenProvider {
         this.secret = secret;
     }
 
-    /**
-     * Generates a simple Base64 token that contains:
-     * userId | email | role | expiresAt
-     */
     public String generateToken(Authentication authentication,
                                 Long userId,
                                 String role,
