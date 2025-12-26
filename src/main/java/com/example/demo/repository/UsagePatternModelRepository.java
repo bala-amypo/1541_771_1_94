@@ -1,17 +1,12 @@
 package com.example.demo.repository;
 
-import java.util.Optional;
-
+import com.example.demo.model.Bin;
+import com.example.demo.model.UsagePatternModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.example.demo.model.UsagePatternModel;
+import java.util.Optional;
 
 public interface UsagePatternModelRepository extends JpaRepository<UsagePatternModel, Long> {
 
-    // @Query("""
-    //     SELECT u FROM UsagePatternModel u
-    //     WHERE u.bin.id = :binId
-    //     ORDER BY u.lastUpdated DESC
-    // """)
-    Optional<UsagePatternModel> findLatestByBinId(Long binId);
+    Optional<UsagePatternModel> findTop1ByBinOrderByLastUpdatedDesc(Bin bin);
 }

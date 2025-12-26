@@ -5,14 +5,12 @@ import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.*;
 import com.example.demo.repository.*;
 import com.example.demo.service.OverflowPredictionService;
-import org.springframework.stereotype.Service;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
-@Service
 public class OverflowPredictionServiceImpl implements OverflowPredictionService {
 
     private final BinRepository binRepository;
@@ -21,13 +19,11 @@ public class OverflowPredictionServiceImpl implements OverflowPredictionService 
     private final OverflowPredictionRepository predictionRepository;
     private final ZoneRepository zoneRepository;
 
-    public OverflowPredictionServiceImpl(
-            BinRepository binRepository,
-            FillLevelRecordRepository recordRepository,
-            UsagePatternModelRepository modelRepository,
-            OverflowPredictionRepository predictionRepository,
-            ZoneRepository zoneRepository) {
-
+    public OverflowPredictionServiceImpl(BinRepository binRepository,
+                                         FillLevelRecordRepository recordRepository,
+                                         UsagePatternModelRepository modelRepository,
+                                         OverflowPredictionRepository predictionRepository,
+                                         ZoneRepository zoneRepository) {
         this.binRepository = binRepository;
         this.recordRepository = recordRepository;
         this.modelRepository = modelRepository;
@@ -37,35 +33,34 @@ public class OverflowPredictionServiceImpl implements OverflowPredictionService 
 
     @Override
     public OverflowPrediction generatePrediction(Long binId) {
+
         Bin bin = binRepository.findById(binId)
                 .orElseThrow(() -> new ResourceNotFoundException("Bin not found"));
 
-        FillLevelRecord latestRecord = recordRepository
+        FillLevelRecord latest = recordRepository
                 .findTop1ByBinOrderByRecordedAtDesc(bin)
-                .orElseThrow(() -> new ResourceNotFoundException("No records found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Record not found"));
 
         UsagePatternModel model = modelRepository
                 .findTop1ByBinOrderByLastUpdatedDesc(bin)
                 .orElseThrow(() -> new ResourceNotFoundException("Model not found"));
 
-        double remaining = 100 - latestRecord.getFillPercentage();
-        double rate = latestRecord.getIsWeekend()
-                ? model.getAvgDailyIncreaseWeekend()
-                : model.getAvgDailyIncreaseWeekday();
-
-        if (rate < 0) throw new BadRequestException("Negative rate");
-
-        int days = rate == 0 ? 0 : (int) Math.ceil(remaining / rate);
-
-        LocalDate predictedDate = LocalDate.now().plusDays(days);
-
-        OverflowPrediction prediction = new OverflowPrediction(
-                bin,
-                Date.valueOf(predictedDate),
-                days,
-                model,
-                new Timestamp(System.currentTimeMillis())
+        double remaining = 100 - latest.getFillPercentage();
+        double daily = Math.max(
+                model.getAvgDailyIncreaseWeekday(),
+                model.getAvgDailyIncreaseWeekend()
         );
+
+        int days = (int) Math.ceil(remaining / Math.max(daily, 1));
+
+        if (days < 0) throw new BadRequestException("Invalid prediction");
+
+        OverflowPrediction prediction = new OverflowPrediction();
+        prediction.setBin(bin);
+        prediction.setModelUsed(model);
+        prediction.setDaysUntilFull(days);
+        prediction.setPredictedFullDate(LocalDate.now().plusDays(days));
+        prediction.setGeneratedAt(Timestamp.valueOf(LocalDateTime.now()));
 
         return predictionRepository.save(prediction);
     }
@@ -80,7 +75,6 @@ public class OverflowPredictionServiceImpl implements OverflowPredictionService 
     public List<OverflowPrediction> getPredictionsForBin(Long binId) {
         Bin bin = binRepository.findById(binId)
                 .orElseThrow(() -> new ResourceNotFoundException("Bin not found"));
-
         return predictionRepository.findAll()
                 .stream().filter(p -> p.getBin().equals(bin)).toList();
     }
