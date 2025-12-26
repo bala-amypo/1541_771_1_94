@@ -7,15 +7,20 @@ import com.example.demo.model.Zone;
 import com.example.demo.repository.BinRepository;
 import com.example.demo.repository.ZoneRepository;
 import com.example.demo.service.BinService;
+import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 
+@Service
 public class BinServiceImpl implements BinService {
 
     private final BinRepository binRepository;
     private final ZoneRepository zoneRepository;
 
-    public BinServiceImpl(BinRepository binRepository, ZoneRepository zoneRepository) {
+    public BinServiceImpl(BinRepository binRepository,
+                          ZoneRepository zoneRepository) {
         this.binRepository = binRepository;
         this.zoneRepository = zoneRepository;
     }
@@ -24,32 +29,39 @@ public class BinServiceImpl implements BinService {
     public Bin createBin(Bin bin) {
 
         if (bin.getCapacityLiters() == null || bin.getCapacityLiters() <= 0) {
-            throw new BadRequestException("capacity must be positive");
+            throw new BadRequestException("capacity must be greater than 0");
         }
 
         Zone zone = zoneRepository.findById(bin.getZone().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Zone not found"));
 
         if (Boolean.FALSE.equals(zone.getActive())) {
-            throw new BadRequestException("Zone inactive");
+            throw new BadRequestException("Zone is inactive");
         }
 
+        bin.setZone(zone);
         bin.setActive(true);
+        bin.setCreatedAt(Timestamp.from(Instant.now()));
+        bin.setUpdatedAt(Timestamp.from(Instant.now()));
+
         return binRepository.save(bin);
     }
 
     @Override
-    public Bin updateBin(Long id, Bin bin) {
+    public Bin updateBin(Long id, Bin update) {
+
         Bin existing = getBinById(id);
 
-        if (bin.getLocationDescription() != null) {
-            existing.setLocationDescription(bin.getLocationDescription());
-        }
-        if (bin.getZone() != null && bin.getZone().getId() != null) {
-            Zone zone = zoneRepository.findById(bin.getZone().getId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Zone not found"));
-            existing.setZone(zone);
-        }
+        if (update.getLocationDescription() != null)
+            existing.setLocationDescription(update.getLocationDescription());
+
+        if (update.getLatitude() != null)
+            existing.setLatitude(update.getLatitude());
+
+        if (update.getLongitude() != null)
+            existing.setLongitude(update.getLongitude());
+
+        existing.setUpdatedAt(Timestamp.from(Instant.now()));
 
         return binRepository.save(existing);
     }

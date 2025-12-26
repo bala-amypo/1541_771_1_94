@@ -17,8 +17,14 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public com.example.demo.security.JwtTokenProvider jwtTokenProvider() {
+        return new com.example.demo.security.JwtTokenProvider(
+                "VerySecretKeyForJwtDemo1234567890"
+        );
+    }
 
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**",
