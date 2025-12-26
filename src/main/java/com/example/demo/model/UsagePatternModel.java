@@ -1,29 +1,50 @@
-
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
+import java.sql.Timestamp;
 
 @Entity
-public class OverflowPrediction {
+@Table(name = "usage_pattern_models")
+public class UsagePatternModel {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne private Bin bin;
-    @ManyToOne private UsagePatternModel modelUsed;
+    @ManyToOne
+    @JoinColumn(name = "bin_id")
+    private Bin bin;
 
-    private Integer daysUntilFull;
-    private LocalDate predictedFullDate;
+    private Double avgDailyIncreaseWeekday;
+    private Double avgDailyIncreaseWeekend;
+
+    private Timestamp lastUpdated;
+
+    public UsagePatternModel() {
+    }
+
+    public UsagePatternModel(Bin bin, Double avgDailyIncreaseWeekday,
+                             Double avgDailyIncreaseWeekend, Timestamp lastUpdated) {
+        this.bin = bin;
+        this.avgDailyIncreaseWeekday = avgDailyIncreaseWeekday;
+        this.avgDailyIncreaseWeekend = avgDailyIncreaseWeekend;
+        this.lastUpdated = lastUpdated;
+    }
+
+    
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+
     public Bin getBin() { return bin; }
     public void setBin(Bin bin) { this.bin = bin; }
-    public UsagePatternModel getModelUsed() { return modelUsed; }
-    public void setModelUsed(UsagePatternModel modelUsed) { this.modelUsed = modelUsed; }
-    public Integer getDaysUntilFull() { return daysUntilFull; }
-    public void setDaysUntilFull(Integer daysUntilFull) { this.daysUntilFull = daysUntilFull; }
-    public LocalDate getPredictedFullDate() { return predictedFullDate; }
-    public void setPredictedFullDate(LocalDate predictedFullDate) { this.predictedFullDate = predictedFullDate; }
+
+    public Double getAvgDailyIncreaseWeekday() { return avgDailyIncreaseWeekday; }
+    public void setAvgDailyIncreaseWeekday(Double v) { this.avgDailyIncreaseWeekday = v; }
+
+    public Double getAvgDailyIncreaseWeekend() { return avgDailyIncreaseWeekend; }
+    public void setAvgDailyIncreaseWeekend(Double v) { this.avgDailyIncreaseWeekend = v; }
+
+    public Timestamp getLastUpdated() { return lastUpdated; }
+    public void setLastUpdated(Timestamp lastUpdated) { this.lastUpdated = lastUpdated; }
 }

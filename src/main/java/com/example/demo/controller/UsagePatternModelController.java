@@ -1,7 +1,9 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.ApiResponse;
 import com.example.demo.model.UsagePatternModel;
 import com.example.demo.service.UsagePatternModelService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,23 +19,27 @@ public class UsagePatternModelController {
     }
 
     @PostMapping
-    public UsagePatternModel create(@RequestBody UsagePatternModel model) {
-        return modelService.createModel(model);
+    public ResponseEntity<ApiResponse> create(@RequestBody UsagePatternModel model) {
+        return ResponseEntity.ok(
+                new ApiResponse(true, "Model created", modelService.createModel(model))
+        );
     }
 
     @PutMapping("/{id}")
-    public UsagePatternModel update(@PathVariable Long id,
-                                    @RequestBody UsagePatternModel model) {
-        return modelService.updateModel(id, model);
+    public ResponseEntity<ApiResponse> update(@PathVariable Long id,
+                                              @RequestBody UsagePatternModel model) {
+        return ResponseEntity.ok(
+                new ApiResponse(true, "Model updated", modelService.updateModel(id, model))
+        );
     }
 
     @GetMapping("/bin/{binId}")
-    public UsagePatternModel getForBin(@PathVariable Long binId) {
-        return modelService.getModelForBin(binId);
+    public ResponseEntity<UsagePatternModel> getForBin(@PathVariable Long binId) {
+        return ResponseEntity.ok(modelService.getModelForBin(binId));
     }
 
     @GetMapping
-    public List<UsagePatternModel> getAll() {
-        return modelService.getAllModels();
+    public ResponseEntity<List<UsagePatternModel>> getAll() {
+        return ResponseEntity.ok(modelService.getAllModels());
     }
 }

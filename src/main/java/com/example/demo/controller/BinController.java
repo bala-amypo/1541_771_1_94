@@ -1,7 +1,9 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.ApiResponse;
 import com.example.demo.model.Bin;
 import com.example.demo.service.BinService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,27 +19,31 @@ public class BinController {
     }
 
     @PostMapping
-    public Bin create(@RequestBody Bin bin) {
-        return binService.createBin(bin);
+    public ResponseEntity<ApiResponse> create(@RequestBody Bin bin) {
+        Bin created = binService.createBin(bin);
+        return ResponseEntity.ok(new ApiResponse(true, "Bin created", created));
     }
 
     @PutMapping("/{id}")
-    public Bin update(@PathVariable Long id, @RequestBody Bin bin) {
-        return binService.updateBin(id, bin);
+    public ResponseEntity<ApiResponse> update(@PathVariable Long id, @RequestBody Bin bin) {
+        return ResponseEntity.ok(
+                new ApiResponse(true, "Bin updated", binService.updateBin(id, bin))
+        );
     }
 
     @GetMapping("/{id}")
-    public Bin get(@PathVariable Long id) {
-        return binService.getBinById(id);
+    public ResponseEntity<Bin> get(@PathVariable Long id) {
+        return ResponseEntity.ok(binService.getBinById(id));
     }
 
     @GetMapping
-    public List<Bin> getAll() {
-        return binService.getAllBins();
+    public ResponseEntity<List<Bin>> getAll() {
+        return ResponseEntity.ok(binService.getAllBins());
     }
 
     @PutMapping("/{id}/deactivate")
-    public void deactivate(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse> deactivate(@PathVariable Long id) {
         binService.deactivateBin(id);
+        return ResponseEntity.ok(new ApiResponse(true, "Bin deactivated"));
     }
 }

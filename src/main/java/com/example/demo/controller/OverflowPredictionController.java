@@ -1,7 +1,9 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.ApiResponse;
 import com.example.demo.model.OverflowPrediction;
 import com.example.demo.service.OverflowPredictionService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,22 +19,24 @@ public class OverflowPredictionController {
     }
 
     @PostMapping("/generate/{binId}")
-    public OverflowPrediction generate(@PathVariable Long binId) {
-        return predictionService.generatePrediction(binId);
+    public ResponseEntity<ApiResponse> generate(@PathVariable Long binId) {
+        return ResponseEntity.ok(
+                new ApiResponse(true, "Prediction generated", predictionService.generatePrediction(binId))
+        );
     }
 
     @GetMapping("/{id}")
-    public OverflowPrediction get(@PathVariable Long id) {
-        return predictionService.getPredictionById(id);
+    public ResponseEntity<OverflowPrediction> get(@PathVariable Long id) {
+        return ResponseEntity.ok(predictionService.getPredictionById(id));
     }
 
     @GetMapping("/bin/{binId}")
-    public List<OverflowPrediction> getForBin(@PathVariable Long binId) {
-        return predictionService.getPredictionsForBin(binId);
+    public ResponseEntity<List<OverflowPrediction>> getForBin(@PathVariable Long binId) {
+        return ResponseEntity.ok(predictionService.getPredictionsForBin(binId));
     }
 
     @GetMapping("/zone/{zoneId}/latest")
-    public List<OverflowPrediction> getLatestForZone(@PathVariable Long zoneId) {
-        return predictionService.getLatestPredictionsForZone(zoneId);
+    public ResponseEntity<List<OverflowPrediction>> latestForZone(@PathVariable Long zoneId) {
+        return ResponseEntity.ok(predictionService.getLatestPredictionsForZone(zoneId));
     }
 }
