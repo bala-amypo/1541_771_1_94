@@ -1,44 +1,29 @@
+
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import java.sql.Timestamp;
+import java.time.LocalDate;
 
 @Entity
-@Table(name = "usage_pattern_models")
-public class UsagePatternModel {
+public class OverflowPrediction {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private Bin bin;
+    @ManyToOne private Bin bin;
+    @ManyToOne private UsagePatternModel modelUsed;
 
-    private Double avgDailyIncreaseWeekday;
-    private Double avgDailyIncreaseWeekend;
-    private Timestamp lastUpdated;
-
-    public UsagePatternModel() {}
-
-    public UsagePatternModel(Bin bin, Double avgDailyIncreaseWeekday,
-                             Double avgDailyIncreaseWeekend, Timestamp lastUpdated) {
-        this.bin = bin;
-        this.avgDailyIncreaseWeekday = avgDailyIncreaseWeekday;
-        this.avgDailyIncreaseWeekend = avgDailyIncreaseWeekend;
-        this.lastUpdated = lastUpdated;
-    }
+    private Integer daysUntilFull;
+    private LocalDate predictedFullDate;
 
     public Long getId() { return id; }
-
+    public void setId(Long id) { this.id = id; }
     public Bin getBin() { return bin; }
     public void setBin(Bin bin) { this.bin = bin; }
-
-    public Double getAvgDailyIncreaseWeekday() { return avgDailyIncreaseWeekday; }
-    public void setAvgDailyIncreaseWeekday(Double v) { this.avgDailyIncreaseWeekday = v; }
-
-    public Double getAvgDailyIncreaseWeekend() { return avgDailyIncreaseWeekend; }
-    public void setAvgDailyIncreaseWeekend(Double v) { this.avgDailyIncreaseWeekend = v; }
-
-    public Timestamp getLastUpdated() { return lastUpdated; }
-    public void setLastUpdated(Timestamp lastUpdated) { this.lastUpdated = lastUpdated; }
+    public UsagePatternModel getModelUsed() { return modelUsed; }
+    public void setModelUsed(UsagePatternModel modelUsed) { this.modelUsed = modelUsed; }
+    public Integer getDaysUntilFull() { return daysUntilFull; }
+    public void setDaysUntilFull(Integer daysUntilFull) { this.daysUntilFull = daysUntilFull; }
+    public LocalDate getPredictedFullDate() { return predictedFullDate; }
+    public void setPredictedFullDate(LocalDate predictedFullDate) { this.predictedFullDate = predictedFullDate; }
 }
