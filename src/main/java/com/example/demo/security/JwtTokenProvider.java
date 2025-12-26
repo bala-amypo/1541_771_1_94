@@ -9,7 +9,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Collections;
 
-@Component
 public class JwtTokenProvider {
 
     private final String secret;
