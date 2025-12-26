@@ -31,20 +31,23 @@ public class AuthController {
         return ResponseEntity.ok(new ApiResponse(true, "User registered", saved));
     }
 
-    @PostMapping("/login")
-public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
-    User user = userService.getByEmail(request.getEmail());
+    // ---- LOGIN (TOKEN) ----
+    @PostMapping("/token")
+    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
 
-    UsernamePasswordAuthenticationToken auth =
-            new UsernamePasswordAuthenticationToken(user.getEmail(), request.getPassword());
+        User user = userService.getByEmail(request.getEmail());
 
-    String token = jwtTokenProvider.generateToken(
-            auth, user.getId(), user.getRole(), user.getEmail()
-    );
+        UsernamePasswordAuthenticationToken auth =
+                new UsernamePasswordAuthenticationToken(
+                        user.getEmail(), request.getPassword()
+                );
 
-    return ResponseEntity.ok(
-            new AuthResponse(token, user.getId(), user.getEmail(), user.getRole())
-    );
-}
+        String token = jwtTokenProvider.generateToken(
+                auth, user.getId(), user.getRole(), user.getEmail()
+        );
 
+        return ResponseEntity.ok(
+                new AuthResponse(token, user.getId(), user.getEmail(), user.getRole())
+        );
+    }
 }
