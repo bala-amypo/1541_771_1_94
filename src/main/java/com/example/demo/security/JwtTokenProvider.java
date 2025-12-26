@@ -1,35 +1,34 @@
 package com.example.demo.security;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.core.Authentication;
 
-import java.util.Date;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 public class JwtTokenProvider {
 
     private final String secret;
-    private final long expirationMs = 3600000; // 1 hour
+    private final long validityInMs = 60 * 60 * 1000; // 1 hour
 
     public JwtTokenProvider(String secret) {
         this.secret = secret;
     }
 
+    /**
+     * Generates a simple Base64 token that contains:
+     * userId | email | role | expiresAt
+     */
     public String generateToken(Authentication authentication,
                                 Long userId,
                                 String role,
                                 String email) {
 
-        Date now = new Date();
-        Date expiry = new Date(now.getTime() + expirationMs);
+        long now = System.currentTimeMillis();
+        long expiry = now + validityInMs;
 
-        return Jwts.builder()
-                .setSubject(String.valueOf(userId))
-                .claim("email", email)
-                .claim("role", role)
-                .setIssuedAt(now)
-                .setExpiration(expiry)
-                .signWith(SignatureAlgorithm.HS256, secret)
-                .compact();
+        String content = userId + ":" + email + ":" + role + ":" + expiry + ":" + secret;
+
+        return Base64.getEncoder()
+                .encodeToString(content.getBytes(StandardCharsets.UTF_8));
     }
 }
