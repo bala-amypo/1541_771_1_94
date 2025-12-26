@@ -7,9 +7,11 @@ import com.example.demo.model.UsagePatternModel;
 import com.example.demo.repository.BinRepository;
 import com.example.demo.repository.UsagePatternModelRepository;
 import com.example.demo.service.UsagePatternModelService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class UsagePatternModelServiceImpl implements UsagePatternModelService {
 
     private final UsagePatternModelRepository modelRepository;
@@ -27,8 +29,9 @@ public class UsagePatternModelServiceImpl implements UsagePatternModelService {
         Bin bin = binRepository.findById(model.getBin().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Bin not found"));
 
-        if (model.getAvgDailyIncreaseWeekday() < 0 || model.getAvgDailyIncreaseWeekend() < 0) {
-            throw new BadRequestException("daily increase cannot be negative");
+        if (model.getAvgDailyIncreaseWeekday() < 0 ||
+            model.getAvgDailyIncreaseWeekend() < 0) {
+            throw new BadRequestException("Daily increase cannot be negative");
         }
 
         model.setBin(bin);
@@ -37,6 +40,7 @@ public class UsagePatternModelServiceImpl implements UsagePatternModelService {
 
     @Override
     public UsagePatternModel updateModel(Long id, UsagePatternModel model) {
+
         UsagePatternModel existing = modelRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Model not found"));
 
@@ -51,11 +55,12 @@ public class UsagePatternModelServiceImpl implements UsagePatternModelService {
 
     @Override
     public UsagePatternModel getModelForBin(Long binId) {
+
         Bin bin = binRepository.findById(binId)
                 .orElseThrow(() -> new ResourceNotFoundException("Bin not found"));
 
         return modelRepository.findTop1ByBinOrderByLastUpdatedDesc(bin)
-                .orElseThrow(() -> new ResourceNotFoundException("Model not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("No model for bin"));
     }
 
     @Override

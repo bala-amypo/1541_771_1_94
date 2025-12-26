@@ -5,12 +5,14 @@ import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.*;
 import com.example.demo.repository.*;
 import com.example.demo.service.OverflowPredictionService;
+import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+@Service
 public class OverflowPredictionServiceImpl implements OverflowPredictionService {
 
     private final BinRepository binRepository;
@@ -19,11 +21,13 @@ public class OverflowPredictionServiceImpl implements OverflowPredictionService 
     private final OverflowPredictionRepository predictionRepository;
     private final ZoneRepository zoneRepository;
 
-    public OverflowPredictionServiceImpl(BinRepository binRepository,
-                                         FillLevelRecordRepository recordRepository,
-                                         UsagePatternModelRepository modelRepository,
-                                         OverflowPredictionRepository predictionRepository,
-                                         ZoneRepository zoneRepository) {
+    public OverflowPredictionServiceImpl(
+            BinRepository binRepository,
+            FillLevelRecordRepository recordRepository,
+            UsagePatternModelRepository modelRepository,
+            OverflowPredictionRepository predictionRepository,
+            ZoneRepository zoneRepository
+    ) {
         this.binRepository = binRepository;
         this.recordRepository = recordRepository;
         this.modelRepository = modelRepository;
@@ -37,30 +41,29 @@ public class OverflowPredictionServiceImpl implements OverflowPredictionService 
         Bin bin = binRepository.findById(binId)
                 .orElseThrow(() -> new ResourceNotFoundException("Bin not found"));
 
-        FillLevelRecord latest = recordRepository
+        FillLevelRecord latestRecord = recordRepository
                 .findTop1ByBinOrderByRecordedAtDesc(bin)
-                .orElseThrow(() -> new ResourceNotFoundException("Record not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("No records found"));
 
         UsagePatternModel model = modelRepository
                 .findTop1ByBinOrderByLastUpdatedDesc(bin)
-                .orElseThrow(() -> new ResourceNotFoundException("Model not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("No model found"));
 
-        double remaining = 100 - latest.getFillPercentage();
-        double daily = Math.max(
-                model.getAvgDailyIncreaseWeekday(),
-                model.getAvgDailyIncreaseWeekend()
-        );
+        double remainingPercent = 100 - latestRecord.getFillPercentage();
+        double dailyRate = model.getAvgDailyIncreaseWeekday();   // simplified
 
-        int days = (int) Math.ceil(remaining / Math.max(daily, 1));
+        int days = (dailyRate <= 0) ? 0 : (int) Math.ceil(remainingPercent / dailyRate);
 
         if (days < 0) throw new BadRequestException("Invalid prediction");
+
+        LocalDate predictedDate = LocalDate.now().plus(days, ChronoUnit.DAYS);
 
         OverflowPrediction prediction = new OverflowPrediction();
         prediction.setBin(bin);
         prediction.setModelUsed(model);
         prediction.setDaysUntilFull(days);
-        prediction.setPredictedFullDate(LocalDate.now().plusDays(days));
-        prediction.setGeneratedAt(Timestamp.valueOf(LocalDateTime.now()));
+        prediction.setPredictedFullDate(predictedDate);
+        prediction.setGeneratedAt(new Timestamp(System.currentTimeMillis()));
 
         return predictionRepository.save(prediction);
     }
@@ -76,7 +79,9 @@ public class OverflowPredictionServiceImpl implements OverflowPredictionService 
         Bin bin = binRepository.findById(binId)
                 .orElseThrow(() -> new ResourceNotFoundException("Bin not found"));
         return predictionRepository.findAll()
-                .stream().filter(p -> p.getBin().equals(bin)).toList();
+                .stream()
+                .filter(p -> p.getBin().equals(bin))
+                .toList();
     }
 
     @Override
