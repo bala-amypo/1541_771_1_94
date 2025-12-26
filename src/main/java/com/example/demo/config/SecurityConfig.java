@@ -24,13 +24,11 @@ public class SecurityConfig {
         return new JwtTokenProvider("VerySecretKeyForJwtDemo1234567890");
     }
 
-   @Bean
-public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+@Bean
+public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthFilter jwtAuthFilter) throws Exception {
 
     http.csrf(csrf -> csrf.disable())
-        .sessionManagement(sm ->
-                sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        )
+        .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                         "/auth/**",
@@ -40,9 +38,11 @@ public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
                 ).permitAll()
                 .anyRequest().authenticated()
         )
-        .httpBasic(config -> config.disable());   // 👈 popup disabled
+        .httpBasic(config -> config.disable())
+        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
 }
+
 
 }
