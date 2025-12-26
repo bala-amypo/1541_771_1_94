@@ -19,7 +19,6 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // JwtTokenProvider bean
     @Bean
     public JwtTokenProvider jwtTokenProvider() {
         return new JwtTokenProvider("VerySecretKeyForJwtDemo1234567890");
@@ -43,7 +42,7 @@ public class SecurityConfig {
                     ).permitAll()
                     .anyRequest().authenticated()
             )
-            .httpBasic(http -> http.disable())
+            .httpBasic(custom -> custom.disable())
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
