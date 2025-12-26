@@ -32,18 +32,19 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
-        User user = userService.getByEmail(request.getEmail());
+public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
+    User user = userService.getByEmail(request.getEmail());
 
-        UsernamePasswordAuthenticationToken auth =
-                new UsernamePasswordAuthenticationToken(user.getEmail(), request.getPassword());
+    UsernamePasswordAuthenticationToken auth =
+            new UsernamePasswordAuthenticationToken(user.getEmail(), request.getPassword());
 
-        String token = jwtTokenProvider.generateToken(
-                auth, user.getId(), user.getRole(), user.getEmail()
-        );
+    String token = jwtTokenProvider.generateToken(
+            auth, user.getId(), user.getRole(), user.getEmail()
+    );
 
-        return ResponseEntity.ok(
-                new AuthResponse(token, user.getId(), user.getEmail(), user.getRole())
-        );
-    }
+    return ResponseEntity.ok(
+            new AuthResponse(token, user.getId(), user.getEmail(), user.getRole())
+    );
+}
+
 }

@@ -19,6 +19,7 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    // SINGLE JwtTokenProvider bean (used everywhere)
     @Bean
     public JwtTokenProvider jwtTokenProvider() {
         return new JwtTokenProvider("VerySecretKeyForJwtDemo1234567890");
