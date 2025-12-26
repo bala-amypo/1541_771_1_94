@@ -1,47 +1,40 @@
 package com.example.demo.controller;
 
-import java.util.List;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.example.demo.model.FillLevelRecord;
 import com.example.demo.service.FillLevelRecordService;
+import org.springframework.web.bind.annotation.*;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/fill-records")
 public class FillLevelRecordController {
 
-    private final FillLevelRecordService service;
+    private final FillLevelRecordService recordService;
 
-    public FillLevelRecordController(FillLevelRecordService service) {
-        this.service = service;
+    public FillLevelRecordController(FillLevelRecordService recordService) {
+        this.recordService = recordService;
     }
 
     @PostMapping
-    public FillLevelRecord create(@RequestBody FillLevelRecord record ) {
-        return service.createRecord(record);
+    public FillLevelRecord create(@RequestBody FillLevelRecord record) {
+        return recordService.createRecord(record);
     }
 
     @GetMapping("/{id}")
     public FillLevelRecord get(@PathVariable Long id) {
-        return service.getRecordById(id);
+        return recordService.getRecordById(id);
     }
 
     @GetMapping("/bin/{binId}")
-    public List<FillLevelRecord> getBin(@PathVariable Long binId) {
-        return service.getRecordsForBin(binId);
+    public List<FillLevelRecord> getForBin(@PathVariable Long binId) {
+        return recordService.getRecordsForBin(binId);
     }
 
-    // @GetMapping("/bin/{binId}/recent")
-    // public List<FillLevelRecord> getRecent(
-    //         @PathVariable Long binId,
-    //         @RequestParam(defaultValue = "5") int limit) {
-    //     return service.getRecentRecords(binId, limit);
-    // }
+    @GetMapping("/bin/{binId}/recent")
+    public List<FillLevelRecord> getRecent(
+            @PathVariable Long binId,
+            @RequestParam(defaultValue = "5") int limit) {
+        return recordService.getRecentRecords(binId, limit);
+    }
 }

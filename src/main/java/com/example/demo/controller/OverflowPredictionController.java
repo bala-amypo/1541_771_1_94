@@ -1,46 +1,38 @@
 package com.example.demo.controller;
 
-import java.util.List;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.example.demo.model.OverflowPrediction;
 import com.example.demo.service.OverflowPredictionService;
+import org.springframework.web.bind.annotation.*;
 
-import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/predictions")
-@Tag(name = "Overflow Prediction API", description = "Overflow forecasting")
 public class OverflowPredictionController {
 
-    private final OverflowPredictionService service;
+    private final OverflowPredictionService predictionService;
 
-    public OverflowPredictionController(OverflowPredictionService service) {
-        this.service = service;
+    public OverflowPredictionController(OverflowPredictionService predictionService) {
+        this.predictionService = predictionService;
     }
 
     @PostMapping("/generate/{binId}")
     public OverflowPrediction generate(@PathVariable Long binId) {
-        return service.generatePrediction(binId);
+        return predictionService.generatePrediction(binId);
     }
 
     @GetMapping("/{id}")
     public OverflowPrediction get(@PathVariable Long id) {
-        return service.getPredictionById(id);
+        return predictionService.getPredictionById(id);
     }
 
     @GetMapping("/bin/{binId}")
-    public List<OverflowPrediction> getByBin(@PathVariable Long binId) {
-        return service.getPredictionsForBin(binId);
+    public List<OverflowPrediction> getForBin(@PathVariable Long binId) {
+        return predictionService.getPredictionsForBin(binId);
     }
 
     @GetMapping("/zone/{zoneId}/latest")
-    public List<OverflowPrediction> getLatestByZone(@PathVariable Long zoneId) {
-        return service.getLatestPredictionsForZone(zoneId);
+    public List<OverflowPrediction> getLatestForZone(@PathVariable Long zoneId) {
+        return predictionService.getLatestPredictionsForZone(zoneId);
     }
 }
