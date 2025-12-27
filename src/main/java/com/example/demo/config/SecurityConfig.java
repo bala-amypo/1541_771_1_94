@@ -36,11 +36,11 @@ public class SecurityConfig {
             )
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers(
-                            "/",                     // portal home page
-                            "/api/auth/**",          // auth endpoints
-                            "/swagger-ui/**",        // swagger ui
+                            "/",              // portal home
+                            "/users/**",      // login/register APIs (public)
+                            "/swagger-ui/**",
                             "/swagger-ui.html",
-                            "/v3/api-docs/**",       // openapi docs
+                            "/v3/api-docs/**",
                             "/webjars/**",
                             "/static/**",
                             "/css/**",
