@@ -36,16 +36,17 @@ public class SecurityConfig {
             )
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers(
-                            "/",              // portal home
-                            "/users/**",      // login/register APIs (public)
-                            "/swagger-ui/**",
-                            "/swagger-ui.html",
-                            "/v3/api-docs/**",
-                            "/webjars/**",
-                            "/static/**",
-                            "/css/**",
-                            "/js/**"
-                    ).permitAll()
+        "/",
+        "/users/**",
+        "/swagger-ui/**",
+        "/swagger-ui.html",
+        "/v3/api-docs/**",
+        "/webjars/**",
+        "/static/**",
+        "/css/**",
+        "/js/**"
+).permitAll()
+
                     .anyRequest().authenticated()
             )
             .httpBasic(custom -> custom.disable())
