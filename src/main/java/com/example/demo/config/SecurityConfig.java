@@ -19,7 +19,7 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // SINGLE JwtTokenProvider bean (used everywhere)
+    // one JwtTokenProvider bean, shared everywhere
     @Bean
     public JwtTokenProvider jwtTokenProvider() {
         return new JwtTokenProvider("VerySecretKeyForJwtDemo1234567890");
@@ -35,15 +35,19 @@ public class SecurityConfig {
                     sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authorizeHttpRequests(auth -> auth
-        .requestMatchers(
-                "/api/auth/**",
-                "/swagger-ui/**",
-                "/swagger-ui.html",
-                "/v3/api-docs/**"
-        ).permitAll()
-        .anyRequest().authenticated()
-)
-
+                    .requestMatchers(
+                            "/",                     // portal home page
+                            "/api/auth/**",          // auth endpoints
+                            "/swagger-ui/**",        // swagger ui
+                            "/swagger-ui.html",
+                            "/v3/api-docs/**",       // openapi docs
+                            "/webjars/**",
+                            "/static/**",
+                            "/css/**",
+                            "/js/**"
+                    ).permitAll()
+                    .anyRequest().authenticated()
+            )
             .httpBasic(custom -> custom.disable())
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
